@@ -1,0 +1,96 @@
+#!/usr/bin/env perl
+
+use Mojolicious::Lite;
+use Mojolicious::Plugins;
+
+#plugin( 'Webtail', file => "/home/pub/data_gather/log/data_gather.log" );
+#my $plugins = Mojolicious::Plugins->new;
+
+get '/' => { template => 'admin' };
+
+get '/netstat' => sub {
+    my $c = shift;
+
+    my @result = `netstat`;
+    my @ports = grep(/50\.56\.75\.58/, @result);
+
+    my $text = join("\n", @ports);
+    $c->render(text=> $text);
+    #foreach my $match (@ports) {
+    #    $c->render(text=> $match);
+    #}
+
+};
+
+get '/tail' => sub {
+    my $c   = shift;
+    my $module = $c->param('service');
+
+    my $log_file = sprintf('/home/pub/%s/log/%s.log', $module, $module); 
+    app->plugin('Webtail', {file => $log_file, tail_opts => '-f -n 10'});
+ 
+    $c->redirect_to('/webtail')
+};
+
+get '/restart' => sub {
+    my $c   = shift;
+    my $module = $c->param('service');
+
+    my @args = ('sudo', '/usr/bin/systemctl', 'restart', $module);
+    
+    my $result = system(@args);
+    $c->render(text=> "Returned: $result (zero is good, otherwise maybe service not running)");
+    
+};
+
+get '/poweroff' => sub {
+    my $c   = shift;
+    #my $module = $c->param('service');
+
+    my @args = ('sudo', '/usr/sbin/poweroff');
+    
+    my $result = system(@args);
+    $c->render(text=> "Returned: $result (zero is good)");
+    
+};
+
+get '/hello' => sub { 
+    my $c = shift;
+
+    $c->redirect_to('/webtail')
+
+};
+
+app->start;
+
+__DATA__
+
+@@ admin.html.ep
+% layout 'html5';
+<h1>Cart Admin</h1>
+<div>
+<form action="/tail">
+<select name="service">
+    <option value="rtl_fm-scanner">Scanner</option>
+    <option value="leaderboard">Leaderboard</option>
+    <option value="data_gather">Misc</option>
+</select> 
+<input type="submit" value="Tail Log">
+</form>
+<form action="/restart">
+<select name="service">
+    <option value="tail_log">Tail Log</option>
+    <option value="rtl_fm-scanner">Scanner</option>
+    <option value="leaderboard">Leaderboard</option>
+    <option value="data_gather">Misc</option>
+    <option value="heatmap_script">Heatmap Script</option>
+</select> 
+<input type="submit" value="Restart Service">
+</form>
+<p>
+<form action="/poweroff">
+<input type="submit" name="power_off" value="Power Off">
+</form>
+</p>
+</div>
+

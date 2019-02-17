@@ -1,0 +1,12 @@
+[Unit]
+    Description=Cart admin stuff (tail_log)
+    Requires=network-online.target
+    After=network-online.target
+
+[Service]
+    ExecStart=/home/pub/tail_log/bin/tail_log daemon --listen "http://*:3005"
+    RestartSec=2min
+    Restart=on-failure
+
+[Install]
+    WantedBy=multi-user.target
