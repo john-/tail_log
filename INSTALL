@@ -1,0 +1,9 @@
+sudo cp support/tail_log.service /etc/systemd/system
+
+sudo cp support/cart /etc/sudoers.d
+sudo chmod 0440 /etc/sudoers.d/cart
+
+cpanm --sudo --installdeps .
+
+sudo systemctl start tail_log
+sudo systemctl enable tail_log

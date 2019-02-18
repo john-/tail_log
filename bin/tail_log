@@ -3,9 +3,6 @@
 use Mojolicious::Lite;
 use Mojolicious::Plugins;
 
-#plugin( 'Webtail', file => "/home/pub/data_gather/log/data_gather.log" );
-#my $plugins = Mojolicious::Plugins->new;
-
 get '/' => { template => 'admin' };
 
 get '/netstat' => sub {
@@ -26,7 +23,7 @@ get '/tail' => sub {
     my $c   = shift;
     my $module = $c->param('service');
 
-    my $log_file = sprintf('/home/pub/%s/log/%s.log', $module, $module); 
+    my $log_file = sprintf('/cart/%s/log/%s.log', $module, $module); 
     app->plugin('Webtail', {file => $log_file, tail_opts => '-f -n 10'});
  
     $c->redirect_to('/webtail')
@@ -36,7 +33,7 @@ get '/restart' => sub {
     my $c   = shift;
     my $module = $c->param('service');
 
-    my @args = ('sudo', '/usr/bin/systemctl', 'restart', $module);
+    my @args = ('sudo', '/bin/systemctl', 'restart', $module);
     
     my $result = system(@args);
     $c->render(text=> "Returned: $result (zero is good, otherwise maybe service not running)");
@@ -47,7 +44,7 @@ get '/poweroff' => sub {
     my $c   = shift;
     #my $module = $c->param('service');
 
-    my @args = ('sudo', '/usr/sbin/poweroff');
+    my @args = ('sudo', '/sbin/poweroff');
     
     my $result = system(@args);
     $c->render(text=> "Returned: $result (zero is good)");
