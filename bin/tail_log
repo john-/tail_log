@@ -64,8 +64,20 @@ __DATA__
 
 @@ admin.html.ep
 % layout 'html5';
+<style>
+div.overall {
+font-size: 200%;
+}
+input[type=submit] {
+    width: 15em;  height: 5em;
+}
+select
+{
+    width:15em; height: 5em;
+}
+</style>
 <h1>Cart Admin</h1>
-<div>
+<div class="overall">
 <form action="/tail">
 <select name="service">
     <option value="rtl_fm-scanner">Scanner</option>
