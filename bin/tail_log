@@ -23,6 +23,7 @@ get '/tail' => sub {
     my $c   = shift;
     my $module = $c->param('service');
 
+    app->log->debug("going to tail: $module");
     my $log_file = sprintf('/cart/%s/log/%s.log', $module, $module); 
     app->plugin('Webtail', {file => $log_file, tail_opts => '-f -n 10'});
  
@@ -82,7 +83,7 @@ select
 <select name="service">
     <option value="rtl_fm-scanner">Scanner</option>
     <option value="leaderboard">Leaderboard</option>
-    <option value="data_gather">Misc</option>
+    <option value="telem_control">Telem Control</option>
 </select> 
 <input type="submit" value="Tail Log">
 </form>
@@ -91,7 +92,7 @@ select
     <option value="tail_log">Tail Log</option>
     <option value="rtl_fm-scanner">Scanner</option>
     <option value="leaderboard">Leaderboard</option>
-    <option value="data_gather">Misc</option>
+    <option value="telem_control">Telem Control</option>
     <option value="heatmap_script">Heatmap Script</option>
 </select> 
 <input type="submit" value="Restart Service">
