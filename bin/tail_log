@@ -3,6 +3,8 @@
 use Mojolicious::Lite;
 use Mojolicious::Plugins;
 
+my $config = plugin 'Config';
+
 get '/' => { template => 'admin' };
 
 get '/netstat' => sub {
@@ -24,8 +26,7 @@ get '/tail' => sub {
     my $module = $c->param('service');
 
     app->log->debug("going to tail: $module");
-    my $log_file = sprintf('/cart/%s/log/%s.log', $module, $module); 
-    app->plugin('Webtail', {file => $log_file, tail_opts => '-f -n 10'});
+    app->plugin('Webtail', {file => $config->{tools}{$module}{log}, tail_opts => '-f -n 20'});
  
     $c->redirect_to('/webtail')
 };
@@ -34,7 +35,7 @@ get '/restart' => sub {
     my $c   = shift;
     my $module = $c->param('service');
 
-    my @args = ('sudo', '/bin/systemctl', 'restart', $module);
+    my @args = ('sudo', '/bin/systemctl', 'restart', sprintf('%s@%s', $module, $config->{user}));
     
     my $result = system(@args);
     $c->render(text=> "Returned: $result (zero is good, otherwise maybe service not running)");
@@ -81,19 +82,19 @@ select
 <div class="overall">
 <form action="/tail">
 <select name="service">
-    <option value="rtl_fm-scanner">Scanner</option>
-    <option value="leaderboard">Leaderboard</option>
-    <option value="telem_control">Telem Control</option>
+% for my $key (sort keys %{ config->{tools} }) {
+    % my $tool = config->{tools}{$key};
+    <option value=<%= $key %> ><%= $tool->{name} %></option>
+% }
 </select> 
 <input type="submit" value="Tail Log">
 </form>
 <form action="/restart">
 <select name="service">
-    <option value="tail_log">Tail Log</option>
-    <option value="rtl_fm-scanner">Scanner</option>
-    <option value="leaderboard">Leaderboard</option>
-    <option value="telem_control">Telem Control</option>
-    <option value="heatmap_script">Heatmap Script</option>
+% for my $key (sort keys %{ config->{tools} }) {
+    % my $tool = config->{tools}{$key};
+    <option value=<%= $key %> ><%= $tool->{name} %></option>
+% }
 </select> 
 <input type="submit" value="Restart Service">
 </form>
