@@ -44,14 +44,24 @@ get '/restart' => sub {
 
 get '/poweroff' => sub {
     my $c   = shift;
-    #my $module = $c->param('service');
 
     my @args = ('sudo', '/sbin/poweroff');
-    
+
     my $result = system(@args);
     $c->render(text=> "Returned: $result (zero is good)");
     
 };
+
+get '/reboot' => sub {
+    my $c   = shift;
+
+    my @args = ('sudo', '/sbin/reboot');
+
+    my $result = system(@args);
+    $c->render(text=> "Returned: $result (zero is good)");
+    
+};
+
 
 get '/hello' => sub { 
     my $c = shift;
@@ -98,9 +108,12 @@ select
 </select> 
 <input type="submit" value="Restart Service">
 </form>
-<p>
+<p style="margin-bottom:2cm;">
 <form action="/poweroff">
 <input type="submit" name="power_off" value="Power Off">
+</form>
+<form action="/reboot">
+<input type="submit" name="reboot" value="Reboot">
 </form>
 </p>
 </div>

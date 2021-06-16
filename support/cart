@@ -1,5 +1,5 @@
 %users ALL=(ALL) ALL
 
-Cmnd_Alias CART_ADMIN_CMDS = /bin/systemctl restart rtl_fm-scanner@*, /bin/systemctl restart leaderboard@*, /bin/systemctl restart telem_control@*, /bin/systemctl restart tail_log, /sbin/poweroff
+Cmnd_Alias CART_ADMIN_CMDS = /bin/systemctl restart xmit_processor@*, /bin/systemctl restart rtl_fm-scanner@*, /bin/systemctl restart leaderboard@*, /bin/systemctl restart telem_control@*, /bin/systemctl restart tail_log, /sbin/poweroff, /sbin/reboot
 ALL      ALL = (ALL) NOPASSWD: CART_ADMIN_CMDS
 
